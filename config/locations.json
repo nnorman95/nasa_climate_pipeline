@@ -1,0 +1,58 @@
+[
+  {
+    "location_id": "baku_az",
+    "city": "Baku",
+    "country": "Azerbaijan",
+    "latitude": 40.4093,
+    "longitude": 49.8671
+  },
+  {
+    "location_id": "istanbul_tr",
+    "city": "Istanbul",
+    "country": "Turkey",
+    "latitude": 41.0082,
+    "longitude": 28.9784
+  },
+  {
+    "location_id": "london_uk",
+    "city": "London",
+    "country": "United Kingdom",
+    "latitude": 51.5072,
+    "longitude": -0.1276
+  },
+  {
+    "location_id": "new_york_us",
+    "city": "New York",
+    "country": "United States",
+    "latitude": 40.7128,
+    "longitude": -74.0060
+  },
+  {
+    "location_id": "tokyo_jp",
+    "city": "Tokyo",
+    "country": "Japan",
+    "latitude": 35.6762,
+    "longitude": 139.6503
+  },
+  {
+    "location_id": "paris_fr",
+    "city": "Paris",
+    "country": "France",
+    "latitude": 48.8566,
+    "longitude": 2.3522
+  },
+  {
+    "location_id": "rome_it",
+    "city": "Rome",
+    "country": "Italy",
+    "latitude": 41.9028,
+    "longitude": 12.4964
+  },
+  {
+    "location_id": "cairo_eg",
+    "city": "Cairo",
+    "country": "Egypt",
+    "latitude": 30.0444,
+    "longitude": 31.2357
+  }
+]

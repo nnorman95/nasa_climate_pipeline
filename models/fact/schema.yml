@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: fact_daily_weather
+    description: "Daily weather fact table with climate measurements by location and date."
+    columns:
+      - name: location_id
+        description: "Foreign key to dim_location."
+        tests:
+          - not_null
+
+      - name: weather_date
+        description: "Weather observation date."
+        tests:
+          - not_null
+
+      - name: temperature_avg_c
+        description: "Average daily temperature in Celsius."
+
+      - name: precipitation_mm
+        description: "Corrected daily precipitation in millimeters."
+
+      - name: solar_radiation_kwh_m2_day
+        description: "Daily solar radiation in kWh per square meter."

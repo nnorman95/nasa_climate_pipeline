@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: mart_daily_climate_dashboard
+    description: "Dashboard-ready daily climate table with location attributes and derived weather flags."
+    columns:
+      - name: location_id
+        description: "Stable location identifier."
+        tests:
+          - not_null
+
+      - name: city
+        description: "City name."
+        tests:
+          - not_null
+
+      - name: country
+        description: "Country name."
+        tests:
+          - not_null
+
+      - name: weather_date
+        description: "Weather observation date."
+        tests:
+          - not_null
+
+      - name: is_rainy_day
+        description: "True when daily precipitation is greater than zero. Null when precipitation is missing."
+
+      - name: is_high_humidity_day
+        description: "True when relative humidity is at least 80 percent."

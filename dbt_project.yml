@@ -11,6 +11,12 @@ models:
     staging:
       +schema: staging
       +materialized: table
+    dim:
+      +schema: dim
+      +materialized: table
+    fact:
+      +schema: fact
+      +materialized: table
     marts:
       +schema: mart
       +materialized: table

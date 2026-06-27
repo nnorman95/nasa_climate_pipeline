@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: dim_location
+    description: "Location dimension table with city, country, latitude, and longitude."
+    columns:
+      - name: location_id
+        description: "Stable location identifier."
+        tests:
+          - not_null
+          - unique
+
+      - name: city
+        description: "City name."
+        tests:
+          - not_null
+
+      - name: country
+        description: "Country name."
+        tests:
+          - not_null

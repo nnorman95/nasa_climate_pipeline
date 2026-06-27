@@ -29,3 +29,31 @@ models:
 
       - name: is_high_humidity_day
         description: "True when relative humidity is at least 80 percent."
+
+  - name: mart_monthly_climate_summary
+    description: "Monthly climate summary by location."
+    columns:
+      - name: location_id
+        description: "Stable location identifier."
+        tests:
+          - not_null
+
+      - name: city
+        description: "City name."
+        tests:
+          - not_null
+
+      - name: country
+        description: "Country name."
+        tests:
+          - not_null
+
+      - name: month_start
+        description: "First day of the month."
+        tests:
+          - not_null
+
+      - name: day_count
+        description: "Number of daily rows included in the monthly summary."
+        tests:
+          - not_null

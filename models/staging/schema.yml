@@ -29,3 +29,25 @@ models:
         description: "Raw JSON file name loaded into PostgreSQL."
         tests:
           - not_null
+
+  - name: stg_daily_weather
+    description: "Daily weather measurements extracted from NASA POWER JSON responses."
+    columns:
+      - name: location_id
+        description: "Stable location identifier."
+        tests:
+          - not_null
+
+      - name: weather_date
+        description: "Weather observation date."
+        tests:
+          - not_null
+
+      - name: temperature_avg_c
+        description: "Average daily temperature in Celsius."
+
+      - name: relative_humidity_pct
+        description: "Relative humidity percentage."
+
+      - name: precipitation_mm
+        description: "Corrected daily precipitation in millimeters."

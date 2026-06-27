@@ -1,0 +1,16 @@
+name: nasa_climate_pipeline
+version: "1.0.0"
+config-version: 2
+
+profile: nasa_climate_pipeline
+
+model-paths: ["models"]
+
+models:
+  nasa_climate_pipeline:
+    staging:
+      +schema: staging
+      +materialized: table
+    marts:
+      +schema: mart
+      +materialized: table

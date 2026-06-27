@@ -18,3 +18,11 @@ data/processed/*.csv
 # Keep data folders in Git
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+
+# Local dbt profile
+profiles/profiles.yml
+profiles/.user.yml
+
+# dbt local artifacts
+logs/
+target/

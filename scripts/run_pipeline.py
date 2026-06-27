@@ -42,7 +42,7 @@ def main() -> None:
     args = parse_args()
     start, end = resolve_date_range(args)
 
-    print("Step 1/3: Extract NASA POWER data")
+    print("Step 1/4: Extract NASA POWER data")
     run_command([
         sys.executable,
         "scripts/fetch_power.py",
@@ -52,11 +52,14 @@ def main() -> None:
         end,
     ])
 
-    print("Step 2/3: Load raw JSON files into PostgreSQL")
+    print("Step 2/4: Load raw JSON files into PostgreSQL")
     run_command([sys.executable, "scripts/load_raw.py"])
 
-    print("Step 3/3: Build warehouse models")
-    run_command([sys.executable, "scripts/build_models.py"])
+    print("Step 3/4: Build dbt warehouse models")
+    run_command(["dbt", "run", "--profiles-dir", "profiles"])
+
+    print("Step 4/4: Run dbt data quality tests")
+    run_command(["dbt", "test", "--profiles-dir", "profiles"])
 
     print("Pipeline finished successfully")
 

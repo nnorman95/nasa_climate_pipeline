@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: stg_nasa_power_responses
+    description: "Metadata table for raw NASA POWER API responses."
+    columns:
+      - name: id
+        description: "Raw response primary key."
+        tests:
+          - not_null
+          - unique
+
+      - name: location_id
+        description: "Stable location identifier."
+        tests:
+          - not_null
+
+      - name: start_date
+        description: "Start date of the API request period."
+        tests:
+          - not_null
+
+      - name: end_date
+        description: "End date of the API request period."
+        tests:
+          - not_null
+
+      - name: source_file
+        description: "Raw JSON file name loaded into PostgreSQL."
+        tests:
+          - not_null

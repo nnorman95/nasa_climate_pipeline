@@ -1,0 +1,12 @@
+nasa_climate_pipeline:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      user: your_postgres_user
+      password: ""
+      port: 5432
+      dbname: nasa_climate_project
+      schema: public
+      threads: 4

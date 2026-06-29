@@ -190,7 +190,7 @@ Current dbt validation result:
 
 ```text
 dbt run  -> PASS=6
-dbt test -> PASS=23
+dbt test -> PASS=28
 ```
 
 Some metric fields are allowed to be `NULL`. This is intentional because NASA may return missing values for near-real-time data. The pipeline keeps those values as unknown instead of replacing them with fake zeroes.
@@ -289,7 +289,7 @@ A successful full run ends with:
 
 ```text
 dbt run  -> PASS=6
-dbt test -> PASS=23
+dbt test -> PASS=28
 Pipeline finished successfully
 ```
 

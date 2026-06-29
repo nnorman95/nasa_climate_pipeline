@@ -8,6 +8,10 @@ models:
         description: "Foreign key to dim_location."
         tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_location')
+                field: location_id
 
       - name: weather_date
         description: "Weather observation date."

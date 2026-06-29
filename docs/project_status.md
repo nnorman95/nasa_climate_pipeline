@@ -31,7 +31,7 @@ NASA POWER API
 * Prevent duplicate raw loads with a unique constraint and `ON CONFLICT DO NOTHING`.
 * Convert nested NASA JSONB into daily weather rows.
 * Convert NASA fill values such as `-999.0` to `NULL`.
-* Add dbt project structure.
+* Created dbt project structure.
 * Add local dbt profile support through `profiles/profiles.yml`.
 * Add a dbt macro for direct schema naming.
 * Build warehouse layers with dbt:
@@ -48,7 +48,7 @@ NASA POWER API
   * `fact_daily_weather`
   * `mart_daily_climate_dashboard`
   * `mart_monthly_climate_summary`
-* Add dbt tests for staging, dimension, fact, and mart models.
+* Created dbt tests for staging, dimension, fact, and mart models.
 * Add relationship test from `fact_daily_weather.location_id` to `dim_location.location_id`.
 * Add custom dbt tests for:
 

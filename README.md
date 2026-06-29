@@ -223,21 +223,22 @@ psql -d nasa_climate_project -f sql/01_create_raw_tables.sql
 psql -d nasa_climate_project -f sql/02_add_raw_constraints.sql
 ```
 
-Create a local dbt profile at `profiles/profiles.yml`:
+Copy the example dbt profile:
+
+```bash
+cp profiles/profiles.example.yml profiles/profiles.yml
+```
+
+Then edit `profiles/profiles.yml` and set your local PostgreSQL user:
 
 ```yaml
-nasa_climate_pipeline:
-  target: dev
-  outputs:
-    dev:
-      type: postgres
-      host: localhost
-      user: <your_postgres_user>
-      password: ""
-      port: 5432
-      dbname: nasa_climate_project
-      schema: public
-      threads: 4
+user: your_postgres_user
+```
+
+If your local PostgreSQL requires a password, also update:
+
+```yaml
+password: ""
 ```
 
 Check the dbt connection:

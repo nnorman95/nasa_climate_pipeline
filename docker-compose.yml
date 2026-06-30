@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: nasa_climate_postgres
+    environment:
+      POSTGRES_DB: nasa_climate_project
+      POSTGRES_USER: nasa_user
+      POSTGRES_PASSWORD: nasa_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

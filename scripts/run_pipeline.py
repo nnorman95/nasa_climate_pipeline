@@ -17,6 +17,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run full NASA climate ELT pipeline.")
     parser.add_argument("--start", help="Start date in YYYYMMDD format.")
     parser.add_argument("--end", help="End date in YYYYMMDD format.")
+    parser.add_argument(
+    "--dbt-target",
+    default="dev",
+    help="dbt target to use from profiles.yml. Default: dev.",
+)
     return parser.parse_args()
 
 
@@ -56,10 +61,24 @@ def main() -> None:
     run_command([sys.executable, "scripts/load_raw.py"])
 
     print("Step 3/4: Build dbt warehouse models")
-    run_command(["dbt", "run", "--profiles-dir", "profiles"])
+    run_command([
+        "dbt",
+        "run",
+        "--profiles-dir",
+        "profiles",
+        "--target",
+        args.dbt_target,
+    ])
 
     print("Step 4/4: Run dbt data quality tests")
-    run_command(["dbt", "test", "--profiles-dir", "profiles"])
+    run_command([
+        "dbt",
+        "test",
+        "--profiles-dir",
+        "profiles",
+        "--target",
+        args.dbt_target,
+    ])
 
     print("Pipeline finished successfully")
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import json
 from pathlib import Path
 
@@ -78,7 +79,9 @@ def build_raw_record(file_path: Path, locations_by_id: dict) -> dict:
     }
 
 def get_connection() -> psycopg.Connection:
-    return psycopg.connect(f"dbname={DB_NAME}")
+    database_url = os.environ.get("DATABASE_URL", f"dbname={DB_NAME}")
+    return psycopg.connect(database_url)
+
 
 def insert_raw_record(conn: psycopg.Connection, record: dict) -> int:
     sql = """

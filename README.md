@@ -2,7 +2,7 @@
 
 A batch ELT pipeline that collects daily climate data from the NASA POWER API and builds PostgreSQL warehouse tables for climate monitoring and reporting.
 
-The pipeline starts from real API extraction, keeps the raw NASA response as JSONB, and then uses dbt to build cleaned staging tables, warehouse models, and dashboard-ready marts.
+The pipeline starts from real API extraction, keeps the raw NASA response as JSONB, and then uses dbt to build cleaned staging tables, warehouse models, dashboard-ready marts, and data quality tests.
 
 ## Project Goal
 
@@ -18,12 +18,12 @@ The goal is to turn daily NASA POWER climate data into structured tables that ca
 
 ```text
 NASA POWER API
--> raw JSON files
--> PostgreSQL raw JSONB table
--> dbt staging models
--> dbt dimension and fact models
--> dbt marts
--> dbt data tests
+--> raw JSON files
+--> PostgreSQL raw JSONB table
+--> dbt staging models
+--> dbt dimension and fact models
+--> dbt marts
+--> dbt data tests
 ```
 
 ## Data Source
@@ -58,6 +58,7 @@ NASA can return fill values such as `-999.0` when a metric is not available yet.
 * Python
 * PostgreSQL
 * dbt
+* Docker
 * SQL
 * NASA POWER API
 * JSON / JSONB
@@ -70,6 +71,7 @@ NASA can return fill values such as `-999.0` when a metric is not available yet.
 ├── README.md
 ├── requirements.txt
 ├── dbt_project.yml
+├── docker-compose.yml
 ├── config/
 │   └── locations.json
 ├── data/
@@ -98,7 +100,7 @@ NASA can return fill values such as `-999.0` when a metric is not available yet.
 │       ├── mart_daily_climate_dashboard.sql
 │       └── mart_monthly_climate_summary.sql
 ├── profiles/
-│   └── profiles.yml
+│   └── profiles.example.yml
 ├── scripts/
 │   ├── fetch_power.py
 │   ├── load_raw.py
@@ -122,7 +124,7 @@ NASA can return fill values such as `-999.0` when a metric is not available yet.
     └── 10_mart_data_quality_checks.sql
 ```
 
-`profiles/profiles.yml`, `logs/`, and `target/` are local dbt files and are ignored by Git. The `sql/` folder keeps the raw table setup and earlier SQL build scripts; dbt is now the main warehouse transformation layer.
+`profiles/profiles.yml`, `profiles/.user.yml`, `logs/`, and `target/` are local dbt files and are ignored by Git. The `sql/` folder keeps the raw table setup and earlier SQL build scripts; dbt is now the main warehouse transformation layer.
 
 ## Warehouse Layers
 
@@ -180,11 +182,14 @@ Monthly climate summary by location. This table is better for trend analysis tha
 
 The project uses dbt tests for key warehouse checks:
 
-* non-null primary fields;
+* non-null key fields;
+* unique raw response identifiers;
 * unique location identifiers in the location dimension;
-* non-null dates;
-* non-null location keys;
-* basic mart-level key checks.
+* relationship validation between fact and dimension models;
+* fact table grain validation;
+* daily mart grain validation;
+* monthly mart grain validation;
+* basic metric range validation.
 
 Current dbt validation result:
 
@@ -268,6 +273,59 @@ Step 3: Build dbt warehouse models
 Step 4: Run dbt data tests
 ```
 
+## Optional: PostgreSQL with Docker
+
+The project can also run against a PostgreSQL container. This avoids depending on a locally installed PostgreSQL server.
+
+Start PostgreSQL with Docker Compose:
+
+```bash
+docker compose up -d
+```
+
+The container exposes PostgreSQL on port `5433`:
+
+```text
+localhost:5433
+```
+
+Create raw tables and constraints in the Docker database:
+
+```bash
+PGPASSWORD=nasa_password psql -h localhost -p 5433 -U nasa_user -d nasa_climate_project -f sql/01_create_raw_tables.sql
+PGPASSWORD=nasa_password psql -h localhost -p 5433 -U nasa_user -d nasa_climate_project -f sql/02_add_raw_constraints.sql
+```
+
+Check the Docker database connection:
+
+```bash
+PGPASSWORD=nasa_password psql -h localhost -p 5433 -U nasa_user -d nasa_climate_project -c "SELECT version();"
+```
+
+Check the dbt Docker target:
+
+```bash
+dbt debug --profiles-dir profiles --target docker
+```
+
+Run the full pipeline against Docker PostgreSQL:
+
+```bash
+DATABASE_URL="postgresql://nasa_user:nasa_password@localhost:5433/nasa_climate_project" python scripts/run_pipeline.py --start 20240101 --end 20240107 --dbt-target docker
+```
+
+Stop the Docker PostgreSQL container:
+
+```bash
+docker compose down
+```
+
+Stop the container and remove the Docker volume data:
+
+```bash
+docker compose down -v
+```
+
 ## Example Output
 
 After loading 8 locations for 7 days:
@@ -297,5 +355,7 @@ Pipeline finished successfully
 ## Notes
 
 Generated raw JSON and processed CSV files are not committed to Git. They can be recreated by running the pipeline.
+
+Docker PostgreSQL uses port `5433` to avoid conflicts with a local PostgreSQL server on port `5432`.
 
 The raw table is designed to be rerunnable. A unique constraint on `location_id`, `start_date`, and `end_date` prevents duplicate raw API loads for the same location and request period.

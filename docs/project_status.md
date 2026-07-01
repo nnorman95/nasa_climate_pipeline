@@ -1,10 +1,8 @@
 # Project Status
 
-# Project Status
-
 ## Current Implementation
 
-The pipeline currently uses Python for API extraction and raw loading, PostgreSQL for raw JSONB storage, and dbt for warehouse transformations and data tests.
+The pipeline currently uses Python for API extraction and raw loading, PostgreSQL for raw JSONB storage, dbt for warehouse transformations and data tests, Docker Compose for local services, cron for scheduling, and Metabase for dashboarding.
 
 ## Current Pipeline
 
@@ -20,6 +18,7 @@ NASA POWER API
 -> dbt dimension and fact models
 -> dbt marts
 -> dbt data tests
+-> Metabase dashboard
 ```
 
 ## Completed
@@ -28,65 +27,101 @@ NASA POWER API
 * Save raw API responses as JSON files.
 * Save processed CSV files locally for inspection.
 * Load raw API responses into PostgreSQL as JSONB.
+* Support local PostgreSQL and Docker PostgreSQL through `DATABASE_URL`.
 * Prevent duplicate raw loads with a unique constraint and `ON CONFLICT DO NOTHING`.
 * Convert nested NASA JSONB into daily weather rows.
 * Convert NASA fill values such as `-999.0` to `NULL`.
 * Created dbt project structure.
-* Add local dbt profile support through `profiles/profiles.yml`.
-* Add a dbt macro for direct schema naming.
-* Build warehouse layers with dbt:
+* Added local dbt profile support through `profiles/profiles.yml`.
+* Added `profiles/profiles.example.yml` as a safe tracked profile template.
+* Added a dbt macro for direct schema naming.
+* Built warehouse layers with dbt:
 
   * `staging`
   * `dim`
   * `fact`
   * `mart`
-* Build dbt models:
+* Built dbt models:
 
   * `stg_nasa_power_responses`
   * `stg_daily_weather`
   * `dim_location`
   * `fact_daily_weather`
   * `mart_daily_climate_dashboard`
+  * `mart_location_climate_summary`
   * `mart_monthly_climate_summary`
 * Created dbt tests for staging, dimension, fact, and mart models.
-* Add relationship test from `fact_daily_weather.location_id` to `dim_location.location_id`.
-* Add custom dbt tests for:
+* Added a relationship test from `fact_daily_weather.location_id` to `dim_location.location_id`.
+* Added custom dbt tests for:
 
   * fact table grain;
   * daily mart grain;
   * monthly mart grain;
   * metric ranges.
-* Update the pipeline runner to execute:
+* Updated the pipeline runner to execute:
 
   * API extraction;
   * raw JSON loading;
   * `dbt run`;
   * `dbt test`.
+* Added `--dbt-target` support to run against different dbt profile targets.
+* Added Docker Compose services for:
+
+  * PostgreSQL
+  * Metabase
+* Added a daily scheduler script:
+
+  * `scripts/run_daily_pipeline.sh`
+* Added scheduling documentation:
+
+  * `docs/scheduling.md`
+* Built and documented the Metabase dashboard:
+
+  * `docs/dashboard.md`
 
 ## Verified Outputs
 
-After loading the initial 7-day period and one daily run:
+Current Docker test database after loading the initial sample period and later daily runs:
 
-* `raw.nasa_power_responses`: 16 rows
-* `staging.stg_nasa_power_responses`: 16 rows
-* `staging.stg_daily_weather`: 64 rows
+* `staging.stg_nasa_power_responses`: 32 rows
+* `staging.stg_daily_weather`: 80 rows
 * `dim.dim_location`: 8 rows
-* `fact.fact_daily_weather`: 64 rows
-* `mart.mart_daily_climate_dashboard`: 64 rows
+* `fact.fact_daily_weather`: 80 rows
+* `mart.mart_daily_climate_dashboard`: 80 rows
+* `mart.mart_location_climate_summary`: 8 rows
 * `mart.mart_monthly_climate_summary`: 16 rows
 
 Full dbt validation:
 
 ```text
-dbt run  -> PASS=6
-dbt test -> PASS=28
+dbt run  -> PASS=7
+dbt test -> PASS=35
 ```
 
-The full pipeline runner also completed successfully:
+The full Docker pipeline runner also completed successfully:
 
 ```text
-python scripts/run_pipeline.py --start 20240101 --end 20240107
+DATABASE_URL="postgresql://nasa_user:nasa_password@localhost:5433/nasa_climate_project" python scripts/run_pipeline.py --start 20240101 --end 20240107 --dbt-target docker
 ```
+
+## Dashboard Coverage
+
+The Metabase dashboard is named:
+
+```text
+NASA Climate Dashboard
+```
+
+Current dashboard blocks:
+
+* Daily Average Temperature by City
+* Rainy Days by City
+* High Humidity Days by City
+* Total Solar Radiation by City
+* Average Daily Temperature Range by City
+* Location Climate Summary
+
+The dashboard answers the main business questions from `docs/business_requirements.md`.
 
 ## Data Notes
 
@@ -109,6 +144,7 @@ The project currently uses dbt tests for:
 * fact table grain validation;
 * daily mart grain validation;
 * monthly mart grain validation;
+* location summary uniqueness by location;
 * basic metric range validation.
 
 Earlier SQL data quality scripts are still kept in the repository, but dbt is now the main transformation and validation layer.
@@ -126,4 +162,17 @@ logs/
 target/
 ```
 
-The tracked repository contains the code, SQL setup files, dbt models, dbt tests, documentation, and configuration needed to recreate the pipeline.
+Local environment and generated files are ignored:
+
+```text
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+data/raw/*.json
+data/processed/*.csv
+```
+
+The tracked repository contains the code, SQL setup files, dbt models, dbt tests, Docker Compose setup, scheduler script, documentation, and configuration needed to recreate the pipeline.
+
+The current project is complete as an end-to-end local ELT project.
